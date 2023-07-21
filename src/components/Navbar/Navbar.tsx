@@ -31,7 +31,7 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" color='primary'>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <LightbulbCircleIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />

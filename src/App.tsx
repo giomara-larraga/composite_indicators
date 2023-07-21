@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import NavBar from "./components/Navbar/Navbar"
-import { Card, Container, CardContent, Typography } from "@mui/material";
+import { Card, Container, CardContent, Typography, Button } from "@mui/material";
 
 const playerList = [
   { id: "1", content: "1. Ammonia emissions from agriculture (2_6)" },
@@ -19,23 +19,23 @@ const rowsFromBackend = {
     items: playerList
   },
   Rank1 : {
-    name: "Rank1",
+    name: "Rank 1",
     items: []
   },
   Rank2 : {
-    name: "Rank2",
+    name: "Rank 2",
     items: []
   },
   Rank3: {
-    name: "Rank3",
+    name: "Rank 3",
     items: []
   },
   Rank4: {
-    name: "Rank4",
+    name: "Rank 4",
     items: []
   },
   Rank5: {
-    name: "Rank5",
+    name: "Rank 5",
     items: []
   },
 
@@ -80,6 +80,16 @@ const onDragEnd = (result:any, rows:any, setRows:any) => {
 
 function App() {
   const [rows, setRows] = useState(rowsFromBackend);
+  const [canContinue, setContinue] = useState(false);
+
+  function onRestart(): void {
+    setRows(rowsFromBackend);
+  }
+  function onContinue():void{
+    if (rows.List.items.length ==0) {
+      alert("you can continue")
+    }
+  }
 
   return (
     <div>
@@ -99,9 +109,9 @@ function App() {
                 }}
                 key={"List"}
               >
-                 <Container>
-                  <div>
-                  <Typography>List of indicators</Typography>
+                 <Container sx={{marginBottom:"2rem", display:"flex", flexDirection:"column", minWidth:"100vw", backgroundColor:"ghostwhite", marginRight:0, marginLeft:0}}>
+                  <div style={{marginBottom:"1rem", marginTop:"1rem"}}>
+                  <Typography variant="h6">List of indicators</Typography>
                   </div>
                   <div>
 
@@ -115,16 +125,19 @@ function App() {
                           {...provided.droppableProps}
                           ref={provided.innerRef}
                           style={{
-                            background: snapshot.isDraggingOver
+                            /* background: snapshot.isDraggingOver
                               ? "lightblue"
-                              : "white",
+                              : "ghostwhite", */
+                            /* border: snapshot.isDraggingOver?
+                            "solid thin gray":0,
+                            borderColor: snapshot.isDraggingOver?"gray":"none", */
                             padding: 4,
                             display: 'flex',
                             flexDirection: 'row',
                             overflowX: "auto",
-                            
+                            marginBottom:"1rem",
                             justifyContent: 'flex-start',
-                            minHeight: '12rem',
+                            minHeight: rows["List"].items.length>0?'12rem':"2rem",
                             alignContent : 'center'
                           }}
                         >
@@ -145,12 +158,13 @@ function App() {
                                       style={{
                                         userSelect: "none",
                                         padding: 4,
+                                        marginRight: "2rem",
                                         height: '12rem',
                                         minHeight: "12rem",
                                         width: '10rem',
                                         minWidth: "10rem",
                                         backgroundColor: snapshot.isDragging
-                                          ? "#263B4A"
+                                          ? "thistle"
                                           : "white",
                                         color: "white",
                                         ...provided.draggableProps.style
@@ -197,6 +211,9 @@ function App() {
                   display: "flex",
                   flexDirection: "column",
                   marginRight: "1rem",
+                  border:"solid thin gray",
+                  padding:"1rem",
+                  minWidth:"12rem"
                 }}
                 key={columnId}
               >
@@ -218,7 +235,7 @@ function App() {
                             display: 'flex',
                             flexDirection: "column",
                             overflowX: "auto",
-                            width: columnId=="List"?'100vw':"14rem",
+                            //: columnId=="List"?'100vw':"14rem",
                             justifyContent: 'space-around',
                             minHeight: '12rem',
                             alignContent : 'center'
@@ -246,7 +263,7 @@ function App() {
                                         width: '10rem',
                                         minWidth: "10rem",
                                         backgroundColor: snapshot.isDragging
-                                          ? "#263B4A"
+                                          ? "thistle"
                                           : "white",
                                         color: "white",
                                         ...provided.draggableProps.style
@@ -274,7 +291,13 @@ function App() {
             );}
           })}</div>
         </DragDropContext>
+        
       </Container>
+      <div style={{padding:"1rem", display:"flex", justifyContent:"flex-end"}}> 
+      <Button variant="contained" onClick={onRestart} sx={{marginRight:"1rem"}}>Reset</Button>
+      <Button variant="contained" onClick={onContinue} disabled={(rows["List"].items.length > 0)?true:false}>Continue</Button>
+      </div>
+
     </div>
   );
 }
