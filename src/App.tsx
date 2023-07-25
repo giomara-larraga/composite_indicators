@@ -4,9 +4,23 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Ranking from "./pages/Ranking";
 import BlankCards from "./pages/BlankCards";
 
+import { red } from '@mui/material/colors';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#4C0F69",
+    },
+    secondary: {
+      main: "#F5F5F5",
+    }
+  },
+});
 
 function App() {
   return (
+    <ThemeProvider theme={theme}>
     <div className="App">
       <Router>
         <NavBar />
@@ -16,6 +30,8 @@ function App() {
         </Routes>
       </Router>
     </div>
+    </ThemeProvider>
+
   );
 }
 

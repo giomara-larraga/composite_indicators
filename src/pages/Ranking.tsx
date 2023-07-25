@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import NavBar from "../components/Navbar/Navbar"
-import { Card, Container, CardContent, Typography, Button, AppBar } from "@mui/material";
+import { Card, Container, CardContent, Typography, Button, AppBar, CardHeader } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const playerList = [
@@ -110,10 +110,10 @@ function Ranking(){
                   }}
                   key={"List"}
                 >
-                   <Container sx={{marginBottom:"2rem", display:"flex", flexDirection:"column", minWidth:"100vw", backgroundColor:"ghostwhite", marginRight:0, marginLeft:0}}>
-                    <div style={{marginBottom:"1rem", marginTop:"1rem"}}>
+                   <Container sx={{marginBottom:"2rem", display:"flex", flexDirection:"column", minWidth:"100vw", backgroundColor:"#DEE2E6", marginRight:0, marginLeft:0, justifyContent:"center", alignItems:"center"}}>
+                   {/*  <div style={{marginBottom:"1rem", marginTop:"1rem"}}>
                     <Typography variant="h6">List of indicators</Typography>
-                    </div>
+                    </div> */}
                     <div>
   
                     
@@ -126,13 +126,8 @@ function Ranking(){
                             {...provided.droppableProps}
                             ref={provided.innerRef}
                             style={{
-                              /* background: snapshot.isDraggingOver
-                                ? "lightblue"
-                                : "ghostwhite", */
-                              /* border: snapshot.isDraggingOver?
-                              "solid thin gray":0,
-                              borderColor: snapshot.isDraggingOver?"gray":"none", */
                               padding: 4,
+                              margin:"1rem",
                               display: 'flex',
                               flexDirection: 'row',
                               overflowX: "auto",
@@ -142,6 +137,7 @@ function Ranking(){
                               alignContent : 'center'
                             }}
                           >
+                            
                             {rows["List"].items.map((item, index) => {
                               return (
                                 <Draggable
@@ -159,7 +155,7 @@ function Ranking(){
                                         style={{
                                           userSelect: "none",
                                           padding: 4,
-                                          marginRight: "2rem",
+                                          margin:"1rem",
                                           height: '12rem',
                                           minHeight: "12rem",
                                           width: '10rem',
@@ -193,33 +189,34 @@ function Ranking(){
   
                 </div>
                 <div
-    style={{
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "flex-start",
-      justifyContent: "flex-start",
-     
-    }}
-  >
+        style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+        
+        }}
+    >
             {Object.entries(rows).map(([columnId, column], index) => {
               if (columnId == "List"){
                 return;
               }else
               {
               return (
-                <div
+                <Card
                   style={{
                     display: "flex",
                     flexDirection: "column",
                     marginRight: "1rem",
-                    border:"solid thin gray",
-                    padding:"1rem",
+                    border:"solid thin",
+                    borderColor:"#B9B9B9",
                     minWidth:"12rem"
                   }}
+                  variant="outlined"
                   key={columnId}
                 >
-                  <div >
-                    {column.name}
+                    <CardHeader component={Typography} title={column.name} />
+                    <CardContent>
                     <Droppable droppableId={columnId} key={columnId}
                       direction = "vertical"
                     >
@@ -232,7 +229,6 @@ function Ranking(){
                               background: snapshot.isDraggingOver
                                 ? "lightblue"
                                 : "white",
-                              padding: 4,
                               display: 'flex',
                               flexDirection: "column",
                               overflowX: "auto",
@@ -249,7 +245,7 @@ function Ranking(){
                                   draggableId={item.id}
                                   index={index}
                                 >
-                                   
+                                   {/* list of all the cards in the same rank */}
                                   {(provided, snapshot) => {
                                     return (
                                       <Card
@@ -259,6 +255,7 @@ function Ranking(){
                                         style={{
                                           userSelect: "none",
                                           padding: 4,
+                                          margin:"1rem",
                                           height: '12rem',
                                           minHeight: "12rem",
                                           width: '10rem',
@@ -287,17 +284,17 @@ function Ranking(){
                         );
                       }}
                     </Droppable>
-                  </div>
-                </div>
+                    </CardContent>
+                </Card>
               );}
             })}</div>
           </DragDropContext>
-          
-        </Container>
-        <div style={{padding:"1rem", display:"flex", justifyContent:"flex-end"}}> 
+          <div style={{padding:"1rem", display:"flex", justifyContent:"flex-end"}}> 
         <Button variant="contained" onClick={onRestart} sx={{marginRight:"1rem"}}>Reset</Button>
         <Button variant="contained" onClick={onContinue} disabled={(rows["List"].items.length > 0)?true:false}>Continue</Button>
         </div>
+        </Container>
+
   
       </div>
     );
