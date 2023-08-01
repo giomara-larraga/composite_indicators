@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import NavBar from "./components/Navbar/Navbar"
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Ranking from "./pages/Ranking";
 import BlankCards from "./pages/BlankCards";
-
+import { RowsFromBackend } from "./utils/types";
 import { red } from '@mui/material/colors';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-
+import { initialList } from "./utils/data";
 const theme = createTheme({
   palette: {
     primary: {
@@ -18,15 +18,18 @@ const theme = createTheme({
   },
 });
 
+
+
 function App() {
+  const [currentRanking, setRanking] = useState<RowsFromBackend>(initialList);
   return (
     <ThemeProvider theme={theme}>
     <div className="App">
       <Router>
         <NavBar />
         <Routes>
-          <Route path="/" element={<Ranking />} />
-          <Route path="/blankcards" element={<BlankCards />} />
+          <Route path="/" element={<Ranking initialRows={initialList} rows={currentRanking} setRows={setRanking}/>} />
+          <Route path="/blankcards" element={<BlankCards rows={currentRanking} setRows={setRanking} />} />
         </Routes>
       </Router>
     </div>
