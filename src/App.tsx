@@ -7,13 +7,14 @@ import { RowsFromBackend } from "./utils/types";
 import { red } from '@mui/material/colors';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { initialList } from "./utils/data";
+
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#4C0F69",
+      main: "#103778",
     },
     secondary: {
-      main: "#F5F5F5",
+      main: "#0593A2",
     }
   },
 });

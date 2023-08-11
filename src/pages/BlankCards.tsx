@@ -1,7 +1,4 @@
 import React from "react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-
-import NavBar from "../components/Navbar/Navbar";
 import {
     Card,
     Container,
@@ -14,7 +11,13 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { RowsFromBackend } from "../utils/types";
-
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 interface BlankCardsProps {
     rows: RowsFromBackend;
@@ -23,6 +26,16 @@ interface BlankCardsProps {
 
 function BlankCards({ rows, setRows }: BlankCardsProps) {
     const navigate = useNavigate();
+
+    function onReset(): void {
+
+    }
+    function onBack(): void {
+        if (rows.List.items.length == 0) {
+            setRows(rows);
+            navigate("/");
+        }
+    }
 
     function onContinue(): void {
         if (rows.List.items.length == 0) {
@@ -35,124 +48,84 @@ function BlankCards({ rows, setRows }: BlankCardsProps) {
         <div>
             <AppBar />
             <Container
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    alignItems:"center",
-                }}
+                className="main-container"
             >
-
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            alignContent: "center",
-                            width: "100%",
-                        }}
-                        key={"List"}
-                    >
-                        <Container
-                            sx={{
-                                marginBottom: "2rem",
-                                display: "flex",
-                                flexDirection: "column",
-                                minWidth: "100vw",
-                                backgroundColor: "#DEE2E6",
-                                marginRight: 0,
-                                marginLeft: 0,
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                        >
-                            <div>
-                                <Typography variant="h6">Insert blank cards</Typography>
-                            </div>
-                        </Container>
-                    </div>
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "flex-start",
-                            justifyContent: "flex-start",
-                        }}
-                    >
-                        {Object.entries(rows).map(([columnId, column], index) => {
-                            if (columnId == "List") {
-                                return;
-                            } else {
-                                return (
-                                    <div style={{display:"flex", flexDirection: "row", minWidth:"20rem"}}>
-                                    <Card
-                                        style={{
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            marginRight: "1rem",
-                                            border: "solid thin",
-                                            borderColor: "#B9B9B9",
-                                            minWidth: "14rem",
-                                        }}
-                                        variant="outlined"
-                                        key={columnId}
-                                    >
-                                        <CardHeader component={Typography} title={column.name} />
-                                        <CardContent>
-                                            {column.items.map((item, index) => {
-                                                return (
-                                                    <Card
-                                                        style={{
-                                                            userSelect: "none",
-                                                            padding: 4,
-                                                            margin: "1rem",
-                                                            height: "12rem",
-                                                            minHeight: "12rem",
-                                                            width: "10rem",
-                                                            minWidth: "10rem",
-                                                            backgroundColor: "white",
-                                                            color: "white",
-
-                                                        }}
-                                                    >
-                                                        <CardContent>
-                                                            <Typography
-                                                                sx={{
-                                                                    fontSize: 14,
-                                                                    fontWeight: "bold",
-                                                                }}
-                                                                color="text.primary"
-                                                                gutterBottom
-                                                            >
-                                                                {item.content}
-                                                            </Typography>
-                                                        </CardContent>
-                                                    </Card>
-                                                );
-                                            })}
-
-                                        </CardContent>
-                                    </Card>
-                                    <TextField id="filled-basic" label="Blank cards" variant="filled" defaultValue={0}/>
-
-                                    </div>
-                                );
-                            }
-                        })}
-                    </div>
-               
-                <div
-                    style={{
+                <Container
+                    sx={{
                         padding: "1rem",
-                        display: "flex",
-                        justifyContent: "flex-end",
+                        marginBottom: "1rem"
                     }}
                 >
+                    <Typography variant="h6"> Instructions: Add blank cards between each two consecutive rank classes, to indicate the importance differences among them. Note the number of blank cards does not need to be an integer. </Typography>
+                </Container>
+
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 700}} aria-label="customized table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center"><Typography sx={{fontWeight:"bold"}}>RANK</Typography></TableCell>
+                                <TableCell align="center"><Typography sx={{fontWeight:"bold"}}>INDICATORS</Typography></TableCell>
+                           
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {Object.entries(rows).map(([columnId, column], index) => {
+                                if (columnId == "List" || column.items.length == 0) {
+                                    return;
+                                } else {
+                                    return (
+                                        <>
+                                        <TableRow key={columnId} sx={{backgroundColor:"rgba(16, 55, 120, 0.1)"}}>
+                                            <TableCell component="th" scope="row">
+                                                   <Typography>{column.name}</Typography>
+                                             </TableCell>
+                                             <TableCell component="th" scope="row" sx={{display:"flex", flexDirection:"row", justifyContent:"center"}}>
+                                                    {column.items.map((item, index) => {
+                                                        return (
+                                                            <Card className="card-indicator">
+                                                                <CardContent>
+                                                                    <Typography>
+                                                                        {item.content}
+                                                                    </Typography>
+                                                                </CardContent>
+                                                            </Card>
+                                                        );
+                                                    })}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow sx={{backgroundColor:"rgba(5, 147, 162, 0.2)"}}>
+                                            <TableCell align="right" colSpan={2}>
+                                                <div  style={{display:"flex", flexDirection:"row", alignItems:"center", justifyContent:"center"}}>
+                                                <Typography sx={{marginRight:"1rem", fontWeight:"bold"}}>Blank cards:</Typography>
+                                                <TextField variant="outlined" defaultValue={0}  type="number" sx={{backgroundColor:"white"}}></TextField>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                        </>
+                                    );
+                                }
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+                <div className="buttons-bar">
+                    <Button
+                        variant="contained"
+                        onClick={onBack}
+                        sx={{ marginRight: "1rem" }}
+                    >
+                        Back
+                    </Button>
+                    <Button
+                        variant="contained"
+                        sx={{ marginRight: "1rem" }}
+                    >
+                        Reset
+                    </Button>
                     <Button
                         variant="contained"
                         onClick={onContinue}
-                        disabled={rows["List"].items.length > 0 ? true : false}
                     >
                         Continue
                     </Button>

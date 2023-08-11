@@ -13,43 +13,8 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { RowsFromBackend } from "../utils/types";
+import { onDragEnd } from "../utils/events";
 
-const onDragEnd = (result: any, rows: any, setRows: any) => {
-  if (!result.destination) return;
-  const { source, destination } = result;
-
-  if (source.droppableId !== destination.droppableId) {
-    const sourceColumn = rows[source.droppableId];
-    const destColumn = rows[destination.droppableId];
-    const sourceItems = [...sourceColumn.items];
-    const destItems = [...destColumn.items];
-    const [removed] = sourceItems.splice(source.index, 1);
-    destItems.splice(destination.index, 0, removed);
-    setRows({
-      ...rows,
-      [source.droppableId]: {
-        ...sourceColumn,
-        items: sourceItems,
-      },
-      [destination.droppableId]: {
-        ...destColumn,
-        items: destItems,
-      },
-    });
-  } else {
-    const column = rows[source.droppableId];
-    const copiedItems = [...column.items];
-    const [removed] = copiedItems.splice(source.index, 1);
-    copiedItems.splice(destination.index, 0, removed);
-    setRows({
-      ...rows,
-      [source.droppableId]: {
-        ...column,
-        items: copiedItems,
-      },
-    });
-  }
-};
 
 interface RankingProps {
   initialRows: RowsFromBackend;
@@ -74,127 +39,90 @@ function Ranking({ initialRows, rows, setRows }: RankingProps) {
     <div>
       <AppBar />
       <Container
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
+        className="main-container"
       >
+        <Container style={{
+          padding: "1rem",
+        }}>
+          <Typography variant="h6"> Instructions: Order the cards corresponding to each indicator according to the importance ranking assigned to them. More that one indicator can be ranked in the same position. </Typography>
+        </Container>
         <DragDropContext
           onDragEnd={(result) => onDragEnd(result, rows, setRows)}
         >
           <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              alignContent: "center",
-              width: "100%",
-            }}
+            className="box-indicator-list"
             key={"List"}
           >
-            <Container
-              sx={{
-                marginBottom: "2rem",
-                display: "flex",
-                flexDirection: "column",
-                minWidth: "100vw",
-                backgroundColor: "#DEE2E6",
-                marginRight: 0,
-                marginLeft: 0,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+            <Card
+              className="card-indicator-list"
+              variant="outlined"
             >
-              {/*  <div style={{marginBottom:"1rem", marginTop:"1rem"}}>
-                    <Typography variant="h6">List of indicators</Typography>
-                    </div> */}
-              <div>
-                <Droppable
-                  droppableId={"List"}
-                  key={"List"}
-                  direction="horizontal"
-                >
-                  {(provided, snapshot) => {
-                    return (
-                      <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        style={{
-                          padding: 4,
-                          margin: "1rem",
-                          display: "flex",
-                          flexDirection: "row",
-                          overflowX: "auto",
-                          marginBottom: "1rem",
-                          justifyContent: "flex-start",
-                          minHeight:
-                            rows["List"].items.length > 0 ? "12rem" : "2rem",
-                          alignContent: "center",
-                        }}
-                      >
-                        {rows["List"].items.map((item, index) => {
-                          return (
-                            <Draggable
-                              key={item.id}
-                              draggableId={item.id}
-                              index={index}
-                            >
-                              {(provided, snapshot) => {
-                                return (
-                                  <Card
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    style={{
-                                      userSelect: "none",
-                                      padding: 4,
-                                      margin: "1rem",
-                                      height: "12rem",
-                                      minHeight: "12rem",
-                                      width: "10rem",
-                                      minWidth: "10rem",
-                                      backgroundColor: snapshot.isDragging
-                                        ? "thistle"
-                                        : "white",
-                                      color: "white",
-                                      ...provided.draggableProps.style,
-                                    }}
-                                  >
-                                    <CardContent>
-                                      <Typography
-                                        sx={{
-                                          fontSize: 14,
-                                          fontWeight: "bold",
-                                        }}
-                                        color="text.primary"
-                                        gutterBottom
-                                      >
-                                        {item.content}
-                                      </Typography>
-                                    </CardContent>
-                                  </Card>
-                                );
-                              }}
-                            </Draggable>
-                          );
-                        })}
-                        {provided.placeholder}
-                      </div>
-                    );
-                  }}
-                </Droppable>
-              </div>
-            </Container>
+              <CardHeader title="List of indicators" component={Typography} titleTypographyProps={{ variant: 'body1', fontWeight: "bold", textTransform: "uppercase", color: "#103778" }} />
+              <CardContent>
+                {rows["List"].items.length > 0 ? (
+                  <Droppable
+                    droppableId={"List"}
+                    key={"List"}
+                    direction="horizontal"
+                  >
+                    {(provided, snapshot) => {
+                      return (
+                        <div
+                          {...provided.droppableProps}
+                          className="droppable-area-indicator-list"
+                          ref={provided.innerRef}
+                          style={{
+                            minHeight:
+                              rows["List"].items.length > 0 ? "12rem" : "2rem",
+                          }}
+                        >
+                          {rows["List"].items.map((item, index) => {
+                            return (
+                              <Draggable
+                                key={item.id}
+                                draggableId={item.id}
+                                index={index}
+                              >
+                                {(provided, snapshot) => {
+                                  return (
+                                    <Card
+                                      ref={provided.innerRef}
+                                      className="card-indicator"
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      style={{
+                                        ...provided.draggableProps.style,
+                                        border: snapshot.isDragging
+                                          ? "solid 0.2rem"
+                                          : "none",
+                                        borderColor: snapshot.isDragging
+                                          ? "#0593A2"
+                                          : "white",
+                                      }}
+                                    >
+                                      <CardContent>
+                                        <Typography
+                                          className="card-text-indicator"
+                                        >
+                                          {item.content}
+                                        </Typography>
+                                      </CardContent>
+                                    </Card>
+                                  );
+                                }}
+                              </Draggable>
+                            );
+                          })}
+                          {provided.placeholder}
+                        </div>
+                      );
+                    }}
+                  </Droppable>) : (<Typography>All the indicators have been ranked.</Typography>)}
+              </CardContent>
+            </Card>
           </div>
           <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "flex-start",
-              justifyContent: "flex-start",
-            }}
+            className="box-rank-list"
           >
             {Object.entries(rows).map(([columnId, column], index) => {
               if (columnId == "List") {
@@ -202,19 +130,13 @@ function Ranking({ initialRows, rows, setRows }: RankingProps) {
               } else {
                 return (
                   <Card
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginRight: "1rem",
-                      border: "solid thin",
-                      borderColor: "#B9B9B9",
-                      minWidth: "12rem",
-                    }}
+                    className="card-rank-list"
                     variant="outlined"
                     key={columnId}
                   >
-                    <CardHeader component={Typography} title={column.name} />
-                    <CardContent>
+                    <CardHeader component={Typography} title={column.name} sx={{ backgroundColor: "#F2F7FA" }} titleTypographyProps={{ variant: 'body1', fontWeight: "bold", textTransform: "uppercase", color: "#103778" }}
+                    />
+                    <CardContent sx={{ backgroundColor: "#F2F7FA" }}>
                       <Droppable
                         droppableId={columnId}
                         key={columnId}
@@ -225,17 +147,14 @@ function Ranking({ initialRows, rows, setRows }: RankingProps) {
                             <div
                               {...provided.droppableProps}
                               ref={provided.innerRef}
+                              className="droppable-area-rank"
                               style={{
-                                background: snapshot.isDraggingOver
-                                  ? "lightblue"
+                                border: snapshot.isDraggingOver
+                                  ? "dashed 1px"
+                                  : "none",
+                                borderColor: snapshot.isDraggingOver
+                                  ? "#0593A2"
                                   : "white",
-                                display: "flex",
-                                flexDirection: "column",
-                                overflowX: "auto",
-                                //: columnId=="List"?'100vw':"14rem",
-                                justifyContent: "space-around",
-                                minHeight: "12rem",
-                                alignContent: "center",
                               }}
                             >
                               {column.items.map((item, index) => {
@@ -250,31 +169,23 @@ function Ranking({ initialRows, rows, setRows }: RankingProps) {
                                       return (
                                         <Card
                                           ref={provided.innerRef}
+                                          className="card-indicator"
                                           {...provided.draggableProps}
                                           {...provided.dragHandleProps}
                                           style={{
-                                            userSelect: "none",
-                                            padding: 4,
-                                            margin: "1rem",
-                                            height: "12rem",
-                                            minHeight: "12rem",
-                                            width: "10rem",
-                                            minWidth: "10rem",
-                                            backgroundColor: snapshot.isDragging
-                                              ? "thistle"
-                                              : "white",
-                                            color: "white",
                                             ...provided.draggableProps.style,
+                                            border: snapshot.isDragging
+                                              ? "solid 0.2rem"
+                                              : "none",
+                                            borderColor: snapshot.isDragging
+                                              ? "#0593A2"
+                                              : "white",
+
                                           }}
                                         >
                                           <CardContent>
                                             <Typography
-                                              sx={{
-                                                fontSize: 14,
-                                                fontWeight: "bold",
-                                              }}
-                                              color="text.primary"
-                                              gutterBottom
+                                              className="card-text-indicator"
                                             >
                                               {item.content}
                                             </Typography>
@@ -298,11 +209,7 @@ function Ranking({ initialRows, rows, setRows }: RankingProps) {
           </div>
         </DragDropContext>
         <div
-          style={{
-            padding: "1rem",
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
+          className="buttons-bar"
         >
           <Button
             variant="contained"
